@@ -1,0 +1,23 @@
+#!/bin/sh  
+while read -r pigname  
+do  
+#Moving the output paths to a file for deletion  
+cat $pigname | grep STORE > test  
+cut -f 2 -d "'" test > todelete  
+#Reading the paths one by one and deleting it only if it exists and if exists - checks for permission and deletes it.  
+while read -r line  
+do  
+        if [ -d $line ];  
+        then  
+                if [ -w $line ];  
+                then  
+                        `rm -r $line`  
+                else  
+                        echo No permission to delete the Output, Omitting $pigname  
+                fi  
+        fi  
+done < todelete  
+done < $1  
+echo Done!  
+rm test  
+rm todelete  
